@@ -20,7 +20,7 @@
 # Microprogramme pour les opérations arithmétiques/logiques typiques (ajoutez
 # autant d'adresses que vous en avez besoin à partir de 0x20) :
 
-20  6e 00 	#<À REMPLIR>
+20  6e 00	#<À REMPLIR>
 22  21 10	#...
-24	60 82
+24	ea 0c
 26	10 82

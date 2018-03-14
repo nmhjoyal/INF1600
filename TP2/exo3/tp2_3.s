@@ -1,14 +1,10 @@
 .data
 	/* Votre programme assembleur ici... */
-	i: .int 10
-	increm: .int 0
-	zero: .int 0
-	
 .global func_s
 
 func_s:	
-	mov i, %esi
-	mov increm, %ecx
+	mov $10, %esi
+	mov $0, %edi
 	
 	boucle:
 		mov d, %eax
@@ -23,16 +19,16 @@ func_s:
 		add $500, %edx		# c+500
 		cmp %ebx, %edx		# (c+500) - (b-1000)
 		ja conditionIf 		# si (c+500) - (b-1000) > 0, jmp if
-		jmp conditionElse
+		jnae conditionElse
 
 
 	conditionIf: 
 		mov c, %edx			
 		sub $500, %edx		# c-500
 		mov %edx, c
-		mov b, %ebx		
-		cmp %edx, %ebx		# b - (c-500)
-		ja conditionIf2		# si b - (c-500) > 0
+		mov b, %eax		
+		cmp %edx, %eax		# b - c
+		ja conditionIf2		# si b - c > 0
 		jmp break
 		
 	conditionIf2:
@@ -52,7 +48,7 @@ func_s:
 		jmp break
 		
 	break:
-		add $1, %ecx		#incremente compteur
-		cmp %ecx, %esi 		# compteur - 10
-		jae boucle			# si 10 >= compteur, boucle 
+		add $1, %edi		#incremente compteur
+		cmp %edi, %esi 		# 10-compteur
+		jae boucle			# si 10-compteur >= 0, boucle 
 		ret

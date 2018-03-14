@@ -40,6 +40,7 @@ int main(void) {
 	printf("Le résultat devrait être le même les 3 fois :\n\n");
 	func_c();
 	printf("Version en langage C : %i\n", a);
+	printf("a = %d    b = %d    c = %d    d = %d    e = %d\n", a, b, c, d, e);
 	a = INIT_A;
 	b = INIT_B;
 	c = INIT_C;
@@ -47,6 +48,7 @@ int main(void) {
 	e = INIT_E;
 	func_s();
 	printf("Version en assembleur : %i\n", a);
+	printf("a = %d    b = %d    c = %d    d = %d    e = %d\n", a, b, c, d, e);
 	a = INIT_A;
 	b = INIT_B;
 	c = INIT_C;

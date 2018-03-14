@@ -1,5 +1,4 @@
 .data
-	/* Votre programme assembleur ici... */
 .global func_s
 
 func_s:	
@@ -18,9 +17,8 @@ func_s:
 		mov c, %edx
 		add $500, %edx		# c+500
 		cmp %ebx, %edx		# (c+500) - (b-1000)
-		ja conditionIf 		# si (c+500) - (b-1000) > 0, jmp if
-		jnae conditionElse
-
+		ja conditionIf 		# si (c+500) - (b-1000) > 0
+		jmp conditionElse
 
 	conditionIf: 
 		mov c, %edx			

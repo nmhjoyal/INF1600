@@ -6,5 +6,30 @@ matrix_transpose_asm:
         
         /* Write your solution here */
         
+        dim: .int 8(%ebp)
+    
+        mov $0, %edx
+        mov $0, %ebx
+        mov dim, %ecx
+        jmp incre
+        
+        incre:
+			jmp remplirTranspose
+			inc %ebx
+			cmp dim, %ebx
+			jne init
+        
+        remplirTranspose:
+			add (16(%ebp) + (%edx)), %eax
+			add dim, %edx
+			loop remplirTranspose
+			
+		init:
+			mov $0, %ecx
+			mov (%ebx), %edx
+			jmp incre
+			
+		mov %eax, 12(%ebp)
+        
         leave          /* restore ebp and esp */
         ret            /* return to the caller */

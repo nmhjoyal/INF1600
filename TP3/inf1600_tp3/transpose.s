@@ -10,7 +10,7 @@ matrix_transpose_asm:
     
         mov $0, %edx
         mov $0, %ebx
-        mov dim, %ecx
+        mov dim-1, %ecx
         jmp incre
         
         incre:
@@ -25,7 +25,7 @@ matrix_transpose_asm:
 			loop remplirTranspose
 			
 		init:
-			mov $0, %ecx
+			mov dim-1, %ecx
 			mov (%ebx), %edx
 			jmp incre
 			

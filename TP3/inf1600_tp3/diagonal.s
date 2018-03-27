@@ -28,7 +28,7 @@ matrix_diagonal_asm:
 			
 			mov 12(%ebp), %edx			/* outmatdata dans edx */
 			mov $0, %edi
-			mov %edi, (%edx, %eax, 4)		/* mettre 0 a position [i,j] de edx */
+			mov %edi, (%edx, %eax, 4)		/* mettre 0 a position [r,c] de edx */
 			mov %edx, 12(%ebp)			/* mettre a jour param out */
 			
 			jmp verif
@@ -37,7 +37,7 @@ matrix_diagonal_asm:
 			mov 8(%ebp), %edx			/* inmatdata dans edx */
 			mov (%edx, %eax, 4), %edi	/* inmatdata[i,j] dans edi */
 			mov 12(%ebp), %edx			/* outmatdata dans edx */
-			mov %edi, (%edx, %eax, 4)	/* %edi dans outmatdata[i,j] */
+			mov %edi, (%edx, %eax, 4)	/* %edi dans outmatdata[r,c] */
 			
 			mov %edx, 12(%ebp)			/* mettre a jour param out */
 			
@@ -49,7 +49,7 @@ matrix_diagonal_asm:
 			mov 16(%ebp), %eax
 			cmp %ecx, %eax
 			jl boucleColonnes				
-			mov $0, %ecx				/* reinit j */			
+			mov $0, %ecx				/* reinit c */			
 			jmp boucleLignes
 			
 		

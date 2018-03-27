@@ -14,7 +14,7 @@ matrix_multiply_asm:
         for1:
 			mov 16(%ebp), %eax		/* eax = matorder */
 			cmp %ebx, %eax			/* matorder - r */
-			jna fin					/* si r > matorder, sinon continuer (on verifie condition de la boucle) */
+			jna end					/* si r > matorder, sinon continuer (on verifie condition de la boucle) */
 			add $1, %ebx			/* ++r */
 			jmp for2
 			

@@ -15,7 +15,7 @@ matrix_row_aver_asm:
 			cmp %ebx, %eax			/* matorder - r */
 			jna end				/* si r > matorder, sinon continuer (on verifie condition de la boucle) */
 			add $1, %ebx			/* ++r */
-			mov $0, edi 			/* edi = elem = 0 */
+			mov $0, %edi 			/* edi = elem = 0 */
 			jmp for2
 			
         

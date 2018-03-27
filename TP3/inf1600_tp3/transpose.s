@@ -6,6 +6,29 @@ matrix_transpose_asm:
         
         /* Write your solution here */
         
+        mov $0, %eax			// eax = r = 0
+        mov $0, %ebx			// ebx = c = 0
+        mov 16(%ebp), %ecx		// ecx = matorder
+        jmp for1
+        
+        for1:
+			cmp %eax, %ecx			// matorder - r
+			jna dim				// si r > matorder, sinon continuer (on verifie condition de la boucle)
+			add $1, %eax			// ++r
+			jmp for2
+			
+        
+        for2:
+			cmp %ebx, %ecx 			// matorder - c
+			jna for1				// si c > matorder, sinon continuer (on verifie condition de la boucle)
+			add $1, %ebx			// ++c
+			mov %eax(%ebx,,%ecx), %ecx		//edx = c + r * matorder
+			mov 8(%edx), %esi		// esi = inmatdata
+			mov 12(%ebp), %edi		// edi = outmatdata
+			mov %eax[%edx], %ecx[%edx]	// outmatdata[%edx] = inmatdata[%edx]
+			jmp for1	
+			
+              
         dim: .int 8(%ebp)
     
         mov $0, %edx

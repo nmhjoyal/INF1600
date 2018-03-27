@@ -14,19 +14,28 @@ matrix_transpose_asm:
             mov 16(%ebp), %eax		/* eax = matorder */
 			cmp %ebx, %eax			/* matorder - r */
 			jna dim				/* si r > matorder, sinon continuer (on verifie condition de la boucle) */
-			add $1, %eax			/* ++r */
+			add $1, %ebx			/* ++r */
 			jmp for2
 			
         
         for2:
-			cmp %ebx, %ecx 			/* matorder - c */
+			mov 16(%ebp), %eax		/* eax = matorder */
+			cmp %ecx, %eax 			/* matorder - c */
 			jna for1				/* si c > matorder, sinon continuer (on verifie condition de la boucle)
-			add $1, %ebx			/* ++c */
-			mov %eax(%ebx,,%ecx), %ecx		/* edx = c + r * matorder */
-			mov 8(%edx), %esi		/* esi = inmatdata */
-			mov 12(%ebp), %edi		/* edi = outmatdata */
-			mov %eax[%edx], %ecx[%edx]	/* outmatdata[%edx] = inmatdata[%edx] */
-			jmp for1	
+			
+			mul %ecx				/* matorder x c */
+			add %ebx, %ecx			/* (matorder x c) + r */
+			mov 8(%ebp), %edx		/* edx = inmatdata */
+			sbl $4, %esp			/* fait de la place sur la pile */
+			push (%edx, %ecx, 4)		/* met resultats dans edi */
+			
+			mul %ebx				/* matorder x r */
+			add %ecx, %ebx			/* (matorder x r) + c */
+			mov 12(%ebp), %edx		/* edx = outmatdata */
+			mov %esp, (%edx, %ebx, 4)		/* met resultats dans edx */
+			
+			add $1, %ecx			/* ++c */
+			jmp for2	
 			
               
         dim: .int 8(%ebp)

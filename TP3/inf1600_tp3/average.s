@@ -5,36 +5,43 @@ matrix_row_aver_asm:
         mov %esp, %ebp 			/* Set ebp to current esp */
 
 		/* Write your solution here */
-		s
-        mov $0, %eax			/* eax = r = 0 */
-        mov $0, %ebx			/* ebx = c = 0 */
-        mov 16(%ebp), %ecx		/* edx = matorder */
+		
+        mov $0, %ebx			/* ebx = r = 0 */
+        mov $0, %ecx			/* ecx = c = 0 */
         jmp for1
         
         for1:
-			cmp %eax, %ecx			/* matorder - r */
+            mov 16(%ebp), %eax		/* eax = matorder */
+			cmp %ebx, %eax			/* matorder - r */
 			jna end				/* si r > matorder, sinon continuer (on verifie condition de la boucle) */
-			add $1, %eax			/* ++r */
-			mov $0, edx 			/* edx = elem = 0 */
+			add $1, %ebx			/* ++r */
+			mov $0, edi 			/* edi = elem = 0 */
 			jmp for2
 			
         
         for2:
-			cmp %ebx, %ecx 			/* matorder - c */
+			mov 16(%ebp), %eax		/* eax = matorder */
+			cmp %ecx, %eax 			/* matorder - c */
 			jna equation				/* si c > matorder, sinon continuer (on verifie condition de la boucle) */
-			add $1, %ebx			/* ++c */
+			add $1, %ecx			/* ++c */
 			
-			sbl $4, %esp			/* fait de la place pour une reponse */
-			mov 8(%ebp), %esi		/* esi = inmatdata */
-			lds %esi[%ebx(%eax,,%edx)]		/* met au dessus de la pile  inmatdata1[c + r * matorder] */
-			add -8(%ebp), %edx				/* ajoute la reponse a elem */
+			mul %ebx				/* matorder x r */
+			add %ecx, %ebx			/* (matorder x r) + c */
+			mov 8(%ebp), %edx		/* edx = inmatdata */
+			sbl $4, %esp			/* fait de la place sur la pile*/
+			add %edi, (%edx, %ebx, 4)		/* met resultats dans elem */
 
-			jmp equation
+			jmp for2
 			
 		equation:
-			mov 12(%ebp), %esi 		/* esi = outmatdata*/
-			div %cx,%dx				/* elem/matorder */
-			mov %edx,%esi[eax]		/* outmatdata[r] = elem/matorder */
+			mov 16(%ebp), %edx		/* edx = matorder */
+			mov %edi, %eax			/* elem = ex */
+			div %dx					/* elem/matorder */
+			sbl $4, %esp
+			push %eax				/* resultat sur la pile */
+			mov 12(%ebp), %edx		/* edx = outmatdata */
+			mov %esp, (%edx, %ebx, 4) 		/*met resultat dans outmatdata[r]*/
+
 			jmp for1
 		
 		end:

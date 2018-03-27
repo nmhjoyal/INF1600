@@ -6,23 +6,43 @@ matrix_equals_asm:
 
         /* Write your solution here */
         
-        mov $1, %eax
-        mov 8(%ebp), %ecx
-        mov 12(%ebp), %ebx
-		mov 16(%ebp), %edx
-        cmpb (%ebx), (%edx)
-        jnz notEqual
-        jmp boucleEquals
+        mov $0, %ebx /* i */
+		mov $0, %ecx  /* j */
+  
+        jmp boucleColonnes
         
-        boucleEquals:
-			incl %ebx
-			incl %edx
-			cmpb (%ebx), (%edx)
-			jnz notEqual
-			loop boucleEquals
+        boucleLignes:
+			incl %ebx					/* i++ */
+			cmp %ebx, %eax				/* i < matorder? */
+			jl boucleColonnes			/* si oui, parcours colonnes */
+			mov $1, %eax				/* sinon, ret = 1, fin */
+			jmp fin
+			
+		boucleColonnes:
+			mov 8(%ebp), %edx			/* inmatdata1 */
+			mov 16(%ebp), %eax			/* matorder */
+			mul %ebx					/* matorder x i */
+			add %ecx, %eax				/* (matorder x i) + j */
+			mov (%edx, %eax, 4), %edi 	/* [i,j] de la premiere matrice */
+			
+			
+			mov 12(%ebp), %edx			/* inmatdata2 */
+			mov (%edx, %eax, 4), %eax
+			
+			cmp %eax, %edi				/* cmp inmatdata1 et inmatdata2 */
+			jnz notEqual				/* si mat1 != mat2 jmp notEqual */
+			
+			incl %ecx					/* sinon, j++ */
+			mov 16(%ebp), %eax			
+			cmp %ecx, %eax				/* j < matorder ? */
+			jl boucleColonnes
+			mov $0, %ecx				/* reinit j */			
+			jmp boucleLignes			
 			
         notEqual:
 			mov $0, %eax
+			jmp fin
         
-        leave          /* Restore ebp and esp */
-        ret            /* Return to the caller */
+        fin:
+			leave          /* Restore ebp and esp */
+			ret            /* Return to the caller */

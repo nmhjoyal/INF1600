@@ -26,10 +26,10 @@ matrix_row_aver_asm:
 			add $1, %ecx			/* ++c */
 			
 			mul %ebx				/* matorder x r */
-			add %ecx, %ebx			/* (matorder x r) + c */
+			add %ecx, %eax			/* (matorder x r) + c */
 			mov 8(%ebp), %edx		/* edx = inmatdata */
 			sbl $4, %esp			/* fait de la place sur la pile*/
-			add %edi, (%edx, %ebx, 4)		/* met resultats dans elem */
+			add %edi, (%edx, %eax, 4)		/* met resultats dans elem */
 
 			jmp for2
 			

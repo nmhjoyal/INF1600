@@ -24,15 +24,15 @@ matrix_transpose_asm:
 			jna for1				/* si c > matorder, sinon continuer (on verifie condition de la boucle)
 			
 			mul %ecx				/* matorder x c */
-			add %ebx, %ecx			/* (matorder x c) + r */
+			add %ebx, %eax			/* (matorder x c) + r */
 			mov 8(%ebp), %edx		/* edx = inmatdata */
 			sbl $4, %esp			/* fait de la place sur la pile */
-			push (%edx, %ecx, 4)		/* met resultats dans edi */
+			push (%edx, %eax, 4)		/* met resultats dans edi */
 			
 			mul %ebx				/* matorder x r */
-			add %ecx, %ebx			/* (matorder x r) + c */
+			add %ecx, %eax			/* (matorder x r) + c */
 			mov 12(%ebp), %edx		/* edx = outmatdata */
-			mov %esp, (%edx, %ebx, 4)		/* met resultats dans edx */
+			mov %esp, (%edx, %eax, 4)		/* met resultats dans edx */
 			
 			add $1, %ecx			/* ++c */
 			jmp for2	

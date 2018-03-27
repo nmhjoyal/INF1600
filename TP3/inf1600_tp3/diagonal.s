@@ -6,36 +6,32 @@ matrix_diagonal_asm:
 
 		/* Write your solution here */
 		
-		mov $0, %ebx /* i */
-		mov $0, %ecx  /* j */
+		mov $0, %ebx /* r */
+		mov $0, %ecx  /* c */
   
         jmp boucleColonnes
         
         boucleLignes:
-			inc %ebx					/* i++ */
-			cmp %ebx, %eax				/* i < matorder? */
+			inc %ebx					/* r++ */
+			cmp %ebx, %eax				/* r < matorder? */
 			jl boucleColonnes			/* si oui, parcours colonnes */
 			jmp fin
 			
 		boucleColonnes:	
 		
 			mov 16(%ebp), %eax			/* matorder dans eax */
-			mul %ebx					/* matorder x i */
-			add %ecx, %eax				/* (matorder x i) + j */
+			mul %ebx					/* matorder x r */
+			add %ecx, %eax				/* (matorder x r) + c */
 			
 			cmp %ecx, %ebx
 			jz diagonal
 			
 			mov 12(%ebp), %edx			/* outmatdata dans edx */
-			mov $0, (%edx, %eax, 4)		/* mettre 0 a position [i,j] de edx */
+			mov $0, %edi
+			mov %edi, (%edx, %eax, 4)		/* mettre 0 a position [i,j] de edx */
 			mov %edx, 12(%ebp)			/* mettre a jour param out */
 			
-			inc %ecx					/* sinon, j++ */
-			mov 16(%ebp), %eax			
-			cmp %ecx, %eax				/* j < matorder ? */
-			jl boucleColonnes
-			mov $0, %ecx				/* reinit j */			
-			jmp boucleLignes
+			jmp verif
 		
 		diagonal:
 			mov 8(%ebp), %edx			/* inmatdata dans edx */
@@ -45,8 +41,16 @@ matrix_diagonal_asm:
 			
 			mov %edx, 12(%ebp)			/* mettre a jour param out */
 			
-			inc %ecx						
-			jmp boucleColonnes
+			jmp verif
+			
+			
+		verif:
+			inc %ecx
+			mov 16(%ebp), %eax
+			cmp %ecx, %eax
+			jl boucleColonnes				
+			mov $0, %ecx				/* reinit j */			
+			jmp boucleLignes
 			
 		
 		fin:	

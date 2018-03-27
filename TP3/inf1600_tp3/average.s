@@ -28,7 +28,7 @@ matrix_row_aver_asm:
 			mul %ebx				/* matorder x r */
 			add %ecx, %eax			/* (matorder x r) + c */
 			mov 8(%ebp), %edx		/* edx = inmatdata */
-			sbl $4, %esp			/* fait de la place sur la pile*/
+			subl $4, %esp			/* fait de la place sur la pile*/
 			add %edi, (%edx, %eax, 4)		/* met resultats dans elem */
 
 			jmp for2
@@ -37,7 +37,7 @@ matrix_row_aver_asm:
 			mov 16(%ebp), %edx		/* edx = matorder */
 			mov %edi, %eax			/* elem = ex */
 			div %dx					/* elem/matorder */
-			sbl $4, %esp
+			subl $4, %esp
 			push %eax				/* resultat sur la pile */
 			mov 12(%ebp), %edx		/* edx = outmatdata */
 			mov %esp, (%edx, %ebx, 4) 		/*met resultat dans outmatdata[r]*/

@@ -36,17 +36,18 @@ matrix_multiply_asm:
 			mul %ebx				/* matorder x r */
 			add %edx, %eax			/* (matorder x r) + i */
 			subl $8, %esp			/* fait de l'espace sur la pile */
-			push 8(%ebp)		/* met sur la pile inmatdata1 */
-			push (-4(%ebp), %eax, 4)		/* met resultats sur la pile _-8(ebp) */
+			add 8(%ebp), %edi		/* met sur la pile inmatdata1 */
+			push (%edi, %eax, 4)		/* met resultats sur la pile _-8(ebp) */
 			
 			mul %edx				/* matorder x i */
 			add %ebx, %eax			/* (matorder x r) + i */
 			subl $8, %esp			/* fait de l'espace sur la pile */
-			push 8(%ebp)		/* met sur la pile inmatdata */
-			push (-4(%ebp), %eax, 4)		/* met resultats sur la pile _-16(ebp) */
+			add 8(%ebp), %edi		/* met sur la pile inmatdata */
+			push (%edi, %eax, 4)		/* met resultats sur la pile _-16(ebp) */
 			
 			mov -8(%ebp), %eax
-			mul -16(%ebp)
+			mov -16(%ebp), %edi
+			mul %edi
 			add %eax, %edi			/* elem += ... */
 			
 			add $16, %esp 			/* on remet le pointeur au debut et ainsi delete les anciens resultats */			

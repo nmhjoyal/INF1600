@@ -8,34 +8,33 @@ matrix_transpose_asm:
         
         mov $0, %ebx			/* ebx = r = 0 */
         mov $0, %ecx			/* ecx = c = 0 */
-        jmp for1
+        jmp for
         
-        for1:
-            mov 16(%ebp), %eax		/* eax = matorder */
-			cmp %ebx, %eax			/* matorder - r */
-			jna end				/* si r > matorder, sinon continuer (on verifie condition de la boucle) */
-			add $1, %ebx			/* ++r */
-			jmp for2
+        for:
+
+			mov 16(%ebp), %eax
+			mul %cl						/* matorder x c */
+			add %ebx, %eax				/* (matorder x c) + r */
+			mov 8(%ebp), %edx			/* edx = inmatdata */
+			mov (%edx, %eax, 4), %esi	/* met resultats dans edi */
 			
-        
-        for2:
-			mov 16(%ebp), %eax		/* eax = matorder */
-			cmp %ecx, %eax 			/* matorder - c */
-			jna for1				/* si c > matorder, sinon continuer (on verifie condition de la boucle)
+			mov 16(%ebp), %eax
+			mul %ebx						/* matorder x r */
+			add %ecx, %eax				/* (matorder x r) + c */
+			mov 12(%ebp), %edx			/* edx = outmatdata */
+			mov %esi, (%edx, %eax, 4)	/* met resultats dans edx */
 			
-			mul %ecx				/* matorder x c */
-			add %ebx, %eax			/* (matorder x c) + r */
-			mov 8(%ebp), %edx		/* edx = inmatdata */
-			subl $4, %esp			/* fait de la place sur la pile */
-			push (%edx, %eax, 4)		/* met resultats dans edi */
+			inc %ecx					/* ++c */
+			mov 16(%ebp), %eax			/* eax = matorder */
+			cmp %ecx, %eax 				/* matorder - c */
+			ja for	
 			
-			mul %ebx				/* matorder x r */
-			add %ecx, %eax			/* (matorder x r) + c */
-			mov 12(%ebp), %edx		/* edx = outmatdata */
-			mov %esp, (%edx, %eax, 4)		/* met resultats dans edx */
+			inc %ebx
+			mov $0, %ecx
+			cmp %ebx, %eax
+			jz end
 			
-			add $1, %ecx			/* ++c */
-			jmp for2	
+			jmp for
 		
 		end:	
 			leave          /* restore ebp and esp */

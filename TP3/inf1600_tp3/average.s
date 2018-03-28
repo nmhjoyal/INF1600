@@ -21,32 +21,30 @@ matrix_row_aver_asm:
 			add %edx, %eax			/* elem += ... */
 			mov %eax, -4(%ebx)		/* rep dans elem */
 			
+			inc %ecx					/* ++c */
 			mov 16(%ebp), %eax 		/* eax = matorder */
 			cmp %ecx, %eax 				/* matorder - c */
-			jna for1				/* si c > matorder, sinon continuer (on verifie condition de la boucle) */
-			inc %ecx					/* ++c */
+			ja for1				/* si c > matorder, sinon continuer (on verifie condition de la boucle) */
 
 			jmp for2
 			
 		for1:
-			mov $0, %ecx			/* c = 0 */
 			
-			mov 16(%ebp), %edx		/* edx = matorder */
+			mov 16(%ebp), %edi		/* edx = matorder */
 			mov -4(%ebp), %eax			/* elem = eax */
-			div %dx				/* elem/matorder */
+			div %edi				/* elem/matorder */
 			mov 12(%ebp), %edx		/* edx = outmatdata */
 			mov %eax, (%edx, %ebx, 4) 		/*met resultat dans outmatdata[r]*/
 
 			mov 16(%ebp), %eax		/* eax = matorder */
 			cmp %ebx, %eax			/* matorder - r */
-			jna end					/* si r > matorder, sinon continuer (on verifie condition de la boucle) */
+			ja end					/* si r > matorder, sinon continuer (on verifie condition de la boucle) */
 			inc %ebx				/* ++r */
+			mov $0, %ecx			/* c = 0 */
 			mov %ecx, -4(%ebp)			/* edi = elem = 0 */
 			jmp for2
 		
 		end:
-			movl $0, -4(%ebp)
-			mov %ebp, %esp
 			leave          			/* Restore ebp and esp */
 			ret           			/* Return to the caller */
 			

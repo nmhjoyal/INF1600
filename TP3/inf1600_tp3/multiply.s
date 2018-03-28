@@ -1,80 +1,106 @@
-.globl matrix_multiply_asm
+global matrix_multiply_asm
 
+.equ MOutOffset, 16 # OUT -  Deplacement de %ebp pour la matrice de sortie sur la pile
+.equ rPM1, %ebx # IN - Pointeur de la matrice 1
+.equ rPM2, %ecx # IN - Pointeur de la matrice 2
+.equ rMSize, %esi # Largeur de la matrice
+.equ rTemp, %edi # valeurs temporaires
+
+.data
+    _indRow: .long 0 # Index Ligne
+    _indCol: .long 0 # Index Colonne
+    _indBuf: .long 0 # Index du buffer pour multiplier les elements
+    _element: .long 0 # Valeur du nouvel element
+    
 matrix_multiply_asm:
-        push %ebp      /* save old base pointer */
-        mov %esp, %ebp /* set ebp to current esp */
+    # Prologue
+    pushl %ebp
+    movl %esp, %ebp
+
+    # Sauvegarder les registres avant de les manipuler
+    pushl %ebx
+    pushl %esi
+    pushl %edi
+	
+    # ================================================================
+    # Initialiser valeurs
+    # ================================================================
+    # Obtenir la largeur de la matrice carree
+    movl 20(%ebp), rMSize
         
-        /* Write your solution here */
+    # Sortir de la fonction si le nombre de cellules est egal a zero
+    test rMSize, rMSize
+    jz end
         
-        mov $0, %ebx			/* ebx = r = 0 */
-        mov $0, %ecx 			/* ecx = c = 0 */
-        push $0				/* -4(ebp) = i */
-        push $0				/* -8(ebp) = elem */
-        jmp for3
+    # Initialiser les pointeurs vers les matrices
+    movl 8(%ebp), rPM1 # Pointeur vers la premiere IN matrice
+    movl 12(%ebp), rPM2 # Pointeur vers la deuxieme IN matrice
+    # ================================================================
         
-        for1:
-			mov 20(%ebp), %eax		/* eax = matorder */
-			cmp %ebx, %eax			/* matorder - r */
-			jz end					/* si r > matorder, sinon continuer (on verifie condition de la boucle) */
-			inc %ebx				/* ++r */
-			mov $0, %ecx 			/* c = 0 */
-			jmp for3	
-			
-		for3:
-			mov 20(%ebp), %eax		/* eax = matorder */	
-			mul %ebx				/* matorder x r */
-			mov -4(%ebp), %edx		/* met i dans edx */
-			add %edx, %eax			/* (matorder x r) + i */
-			mov 8(%ebp), %edx		/* edx = inmatdata1 */
-			mov (%edx, %eax, 4), %edx
-			mov %edx, %esi			/* met resultats dans esi */
-			
-			mov 20(%ebp), %eax		/* eax = matorder */
-			mov -4(%ebp), %edx		/* remet i dans edx */
-			mul %edx				/* matorder x i */
-			add %ecx, %eax			/* (matorder x i) + c */
-			mov 12(%ebp), %edx		/* met inmatdata2 dans edx */
-			mov (%edx, %eax, 4), %edx		/* met resultats dans eax */
-			
-			mov %esi, %eax
-			mul %edx
-			mov -8(%ebp), %edx
-			add %edx, %eax
-			mov %eax, -8(%ebp)			/* elem += ... */
-			
-			
-			mov -4(%ebp), %edx		/* met i dans edx */
-			inc %edx					/* ++i */
-			mov %edx, -4(%ebp)
-			
-			mov 20(%ebp), %eax		/* eax = matorder */
-			cmp %edx, %eax 					/* matorder + i */
-			jna for2						/* si i > matorder, sinon continuer (on verifie condition de la boucle) */
-			
-			jmp for3
-			
-		for2:
-			mov 20(%ebp), %eax		/* matorder dans eax*/
-			mul %ebx				/* matorder x r */
-			add %ecx, %eax			/* (matorder x r) + c */
-			mov 16(%ebp), %edx		/* edx = outmatdata */
-			mov -8(%ebp), %esi		/* outmatdata = elem */
-			mov %esi, (%edx, %eax, 4)
-			
-			mov $0, %eax
-			mov %eax, -4(%ebp)		/* i = 0 */
-			
-			mov 20(%ebp), %eax		/* eax = matorder */
-			cmp %ecx, %eax			/* matorder - c */
-			jna for1				/* si c > matorder, sinon continuer (on verifie condition de la boucle) */
-			inc %ecx				/* ++c */
-			
-			mov $0, %eax
-			mov %eax, -8(%ebp)				/* -8(ebp) = elem */
-			
-			jmp for3
-			
-		end: 	 #epilogue    
-		
-			leave          /* restore ebp and esp */
-			ret            /* return to the caller */
+    jmp LRow
+
+LRow:
+    cmpl _indRow, rMSize # Si l'Index de ligne < largeur de matrice, Commencer la boucle pour colonnes
+    ja LCol
+    
+    jmp end
+
+LCol:
+    cmpl _indCol, rMSize
+    ja LBuf
+    
+    movl $0, _indCol	# Remettre l'Index de colonne a zero pour permettre de recommencer une boucle si necessaire
+    incl _indRow        # Incrementer l'Index de lignes
+    jmp LRow
+    
+LBuf:
+    # Chercher l'element de la premiere matrice a la position (indBuffer + indRow * mSize)
+    movl _indRow, %eax
+    mull rMSize 
+    addl _indBuf, %eax
+    movl (rPM1, %eax, 4), rTemp # Sauvegarder la valeur de la premiere matrice
+    
+    # Chercher l'element de la deuxieme matrice a la position (indCol + indBuf * mSize)
+    movl _indBuf, %eax
+    mull rMSize
+    addl _indCol, %eax
+    movl (rPM2, %eax, 4), %eax
+    
+    # Multiplier les deux elements et additionner le resultat a la valeur du nouvel element
+    mull rTemp
+    addl %eax, _element
+    
+    # Boucler tant que l'Index du buffer est plus petit que la largeur de la matrice
+    incl _indBuf
+    cmpl _indBuf, rMSize
+    ja LBuf
+    
+    # =================================================================
+    # Stocker l'element dans la matrice de sortie
+    # =================================================================
+    # Chercher la position dans la matrice de sortie pour stocker l'element (indCol + indRow * size)
+    movl _indRow, %eax
+    mull rMSize
+    addl _indCol, %eax
+    
+    # Chercher l'adresse de la matrice de sortie
+    movl MOutOffset(%ebp), rTemp
+    lea (rTemp, %eax, 4), rTemp
+    
+    # Stocker l'element dans la matrice de sortie
+    movl _element, %eax
+    movl %eax, (rTemp)
+    # =================================================================
+    
+    movl $0, _element # Reinitialiser la valeur temporaire
+    movl $0, _indBuf # Remettre l'Index de buffer a zero
+    incl _indCol # Incrementer l'Index de colonnes
+    jmp LCol
+    
+end:
+    popl %edi
+    popl %esi
+    popl %ebx
+        
+    leave          /* Restore ebp and esp */
+    ret

@@ -8,8 +8,9 @@ matrix_multiply_asm:
         
         mov $0, %ebx			/* ebx = r = 0 */
         mov $0, %ecx 			/* ecx = c = 0 */
-        push $0				/* -4(ebp) = i */
-        push $0				/* -8(ebp) = elem */
+        pushl $0				/* -4(ebp) = i */
+        pushl $0				/* -8(ebp) = elem */
+		pushl $0				/* temp */
         jmp for3
         
         for1:
@@ -22,22 +23,22 @@ matrix_multiply_asm:
 			
 		for3:
 			mov 20(%ebp), %eax		/* eax = matorder */	
-			mul %ebx				/* matorder x r */
+			mul %bl				/* matorder x r */
 			mov -4(%ebp), %edx		/* met i dans edx */
 			add %edx, %eax			/* (matorder x r) + i */
 			mov 8(%ebp), %edx		/* edx = inmatdata1 */
 			mov (%edx, %eax, 4), %edx
-			mov %edx, %esi			/* met resultats dans esi */
+			mov %edx, -12(%ebp)			/* met resultat dans temp */
 			
 			mov 20(%ebp), %eax		/* eax = matorder */
 			mov -4(%ebp), %edx		/* remet i dans edx */
-			mul %edx				/* matorder x i */
+			mul %dl				/* matorder x i */
 			add %ecx, %eax			/* (matorder x i) + c */
 			mov 12(%ebp), %edx		/* met inmatdata2 dans edx */
-			mov (%edx, %eax, 4), %edx		/* met resultats dans eax */
+			mov (%edx, %eax, 4), %edx		/* met resultats dans edx */
 			
-			mov %esi, %eax
-			mul %edx
+			mov -12(%ebp), %eax
+			mul %dl
 			mov -8(%ebp), %edx
 			add %edx, %eax
 			mov %eax, -8(%ebp)			/* elem += ... */
@@ -55,11 +56,15 @@ matrix_multiply_asm:
 			
 		for2:
 			mov 20(%ebp), %eax		/* matorder dans eax*/
-			mul %ebx				/* matorder x r */
+			mul %bl					/* matorder x r */
 			add %ecx, %eax			/* (matorder x r) + c */
 			mov 16(%ebp), %edx		/* edx = outmatdata */
-			mov -8(%ebp), %esi		/* outmatdata = elem */
-			mov %esi, (%edx, %eax, 4)
+			
+			mov %ecx, -12(%ebp)		/* mettre c dans var temp */
+			mov -8(%ebp), %ecx		/* outmatdata = elem */
+			mov %ecx, (%edx, %eax, 4)
+			mov %ecx, -8(%ebp)
+			mov -12(%ebp), %ecx		/* remet c dans ecx */
 			
 			mov $0, %eax
 			mov %eax, -4(%ebp)		/* i = 0 */
@@ -74,7 +79,10 @@ matrix_multiply_asm:
 			
 			jmp for3
 			
-		end: 	 #epilogue    
-		
+		end:   
+			
+			movl $0, -12(%ebp)
+			movl $0, -8(%ebp)
+			movl $0, -4(%ebp)
 			leave          /* restore ebp and esp */
 			ret            /* return to the caller */

@@ -30,15 +30,15 @@ matrix_multiply_asm:
 			mov (%edx, %eax, 4), %edx
 			mov %edx, -12(%ebp)			/* met resultat dans temp */
 			
-			mov 20(%ebp), %eax		/* eax = matorder */
-			mov -4(%ebp), %edx		/* remet i dans edx */
-			mul %dl				/* matorder x i */
+			mov 20(%ebp), %ax		/* eax = matorder */
+			mov -4(%ebp), %si		/* remet i dans edx */
+			mul %si				/* matorder x i */
 			add %ecx, %eax			/* (matorder x i) + c */
 			mov 12(%ebp), %edx		/* met inmatdata2 dans edx */
-			mov (%edx, %eax, 4), %edx		/* met resultats dans edx */
+			mov (%edx, %eax, 4), %esi		/* met resultats dans edx */
 			
 			mov -12(%ebp), %eax
-			mul %dl
+			mul %esi
 			mov -8(%ebp), %edx
 			add %edx, %eax
 			mov %eax, -8(%ebp)			/* elem += ... */
@@ -63,7 +63,6 @@ matrix_multiply_asm:
 			mov %ecx, -12(%ebp)		/* mettre c dans var temp */
 			mov -8(%ebp), %ecx		/* outmatdata = elem */
 			mov %ecx, (%edx, %eax, 4)
-			mov %ecx, -8(%ebp)
 			mov -12(%ebp), %ecx		/* remet c dans ecx */
 			
 			mov $0, %eax
@@ -71,7 +70,7 @@ matrix_multiply_asm:
 			
 			mov 20(%ebp), %eax		/* eax = matorder */
 			cmp %ecx, %eax			/* matorder - c */
-			jna for1				/* si c > matorder, sinon continuer (on verifie condition de la boucle) */
+			je for1				/* si c > matorder, sinon continuer (on verifie condition de la boucle) */
 			inc %ecx				/* ++c */
 			
 			mov $0, %eax

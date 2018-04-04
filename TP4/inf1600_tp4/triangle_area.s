@@ -1,3 +1,8 @@
+.data
+	factor: .float 2.0
+	temp: .float 0.0
+	perimetre: .float 0.0
+
 .globl _ZNK9CTriangle7AreaAsmEv
 
 _ZNK9CTriangle7AreaAsmEv:

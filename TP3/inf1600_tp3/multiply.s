@@ -39,7 +39,7 @@ matrix_multiply_asm:
 			
 			mov -12(%ebp), %eax
 			mul %esi
-			mov -8(%ebp), %edx
+			mov -8(%ebp), %edxgit 
 			add %edx, %eax
 			mov %eax, -8(%ebp)			/* elem += ... */
 			

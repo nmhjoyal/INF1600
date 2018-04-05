@@ -1,3 +1,7 @@
+.data
+	un: .int 1
+	deux: .int 2
+
 .globl _ZNK9CTriangle12PerimeterAsmEv
 
 _ZNK9CTriangle12PerimeterAsmEv:
@@ -6,10 +10,12 @@ _ZNK9CTriangle12PerimeterAsmEv:
         
         /* Write your solution here */
         mov 8(%ebp), %eax
-        fld (%eax,,4)
-        fld (%eax,,8)
+        fld 4(%eax)
+        mov un, %edx
+        fld 4(%eax, %edx, 4)
         faddp
-        fld (%eax,,12)
+        mov deux, %edx
+        fld 4(%eax, %edx, 4)
         faddp
         
         leave          /* restore ebp and esp */

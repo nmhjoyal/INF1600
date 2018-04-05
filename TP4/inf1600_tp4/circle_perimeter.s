@@ -11,7 +11,7 @@ _ZNK7CCircle12PerimeterAsmEv:
         /* Write your solution here */
         
         mov 8(%ebp), %eax		/* objet C dans %eax */	
-        fld 4(%eax)			/* ajoute C + 4 (mRadius) sur pile */
+        fld 4(%eax)				/* ajoute C + 4 (mRadius) sur pile */
         fldpi					/* pi sur pile */
         fmulp					/* pi * mRadius */
         fld factor				/* factor (2) sur pile */

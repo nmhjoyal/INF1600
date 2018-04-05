@@ -1,7 +1,3 @@
-.data
-	un: .int 1
-	deux: .int 2
-
 .globl _ZNK9CTriangle12PerimeterAsmEv
 
 _ZNK9CTriangle12PerimeterAsmEv:

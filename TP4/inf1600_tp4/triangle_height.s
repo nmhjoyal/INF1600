@@ -1,5 +1,4 @@
 .data
-	element: .int 4
 	factor: .float 2.0
 	
 .globl	_ZNK9CTriangle9HeightAsmEv

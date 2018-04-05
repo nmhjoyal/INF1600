@@ -10,15 +10,12 @@ _ZNK9CTriangle9HeightAsmEv:
         
         /* Write your solution here */
         mov 8(%ebp), %eax					/* objet dans eax */
-        mov element, %edx					/* 4e él de la vtable */
-        mov (%eax, %edx, 4), %eax 			/* 0*objet (vtable) + 4*4(ret float) = CTriangle::AreaCpp dans eax */
-        call *(%eax)						/* resultat placé à st[0] */
-        fld factor
+        mov (%eax), %ebx					/* vTable dans %ebx */
+        push %eax							/* objet = param pour call */
+        call *16(%ebx)						/* Appel AreaCpp, resultat placé à st[0] */
+        fld factor			
         fmulp
-        
-        mov 8(%ebp), %eax					/* obj dans %eax */
-        mov element, %edx
-        fld 4(%eax, %edx, 4)				/* mSides[2] */
+        fld 12(%eax)						/* mSides[2] */
         fdivrp
         
         leave          /* restore ebp and esp */

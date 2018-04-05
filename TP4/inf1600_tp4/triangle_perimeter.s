@@ -9,13 +9,11 @@ _ZNK9CTriangle12PerimeterAsmEv:
         mov %esp, %ebp /* set ebp to current esp */
         
         /* Write your solution here */
-        mov 8(%ebp), %eax
-        fld 4(%eax)
-        mov un, %edx
-        fld 4(%eax, %edx, 4)
-        faddp
-        mov deux, %edx
-        fld 4(%eax, %edx, 4)
+        mov 8(%ebp), %eax				/* objet dans %eax */
+        fld 4(%eax)						/* mSides[0] */
+        fld 8(%eax)						/* mSides[1] */
+        faddp					
+        fld 12(%eax)					/* mSides[2] */
         faddp
         
         leave          /* restore ebp and esp */

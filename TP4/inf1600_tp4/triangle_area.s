@@ -11,32 +11,28 @@ _ZNK9CTriangle7AreaAsmEv:
         
         /* Write your solution here */
         mov 8(%ebp), %eax					/* objet dans eax */
-        mov $2, %edx						/* 2e él de la vtable */
-        mov (%eax, %edx, 4), %eax 			/* 0*objet (vtable) + 2*4(ret float) = CTriangle::PerimeterCpp dans eax */
-        call *(%eax)						/* resultat placé à st[0] */
+        mov (%eax), %ebx					/* vTable dans %ebx */
+        push %eax							/* param = objet pour call */
+        call *8(%ebx)						/* appel PerimeterCpp, resultat placé à st[0] */
         fld factor							/* st[0] = 2 */
         fdivrp								/* st[1] (CTriangle::PerimeterCpp) /st[0] (2) */
-        fstp perimetre						/* sauvegarde p dans ecx */
-        mov 8(%ebp), %eax					/* obj dans %eax */
+        fstp perimetre						/* sauvegarde resultat dans perimetre */
+        
         fld 4(%eax)							/* mSides[0] */
-        fld perimetre						/* mettre p dans st[0] */
+        fld perimetre						/* mettre perimetre dans st[0] */
         fsubp								/* p - mSides[0] */
         fld perimetre							
         fmulp								/* p * (p-mSides[0])*/
-        fstp temp
+        fstp temp							/* resultat dans temp */
         
-        mov 8(%ebp), %eax					/* obj dans %eax */
-        mov $1, %edx
-        fld 4(%eax, %edx, 4)				/* mSides[1] */
+        fld 8(%eax)							/* mSides[1] */
         fld perimetre
         fsubrp								/* p - mSides[1] */
-        fld temp							/* load résultat dans st[0] */
+        fld temp							/* load résultat cumul. sur pile */
         fmulp								/* résultat * (p - mSides[1]) */							
-        fstp temp
+        fstp temp							/* nouveau resultat dans temp */
         
-        mov 8(%ebp), %eax					/* obj dans %eax */
-        mov $2, %edx
-        fld 4(%eax, %edx, 4)				/* mSides[2] */
+        fld 12(%eax)						/* mSides[2] */
         fld perimetre
         fsubrp								/* p - mSides[2] */
         fld temp							/* load résultat cumul. */

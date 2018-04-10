@@ -10,42 +10,20 @@ Decryption_fct:
 	.cfi_offset 5, -8
 	movl	%esp, %ebp
 	.cfi_def_cfa_register 5
-	pushl	%ebx
 	subl	$16, %esp
-	.cfi_offset 3, -12
 	movl	8(%ebp), %edx
 #APP
 # 16 "tp5.c" 1
-	movl $0xff000000, %ebx
-movl %edx, %eax
-and %ebx, %eax
-movl %eax, %ecx
-movl %edx, %eax
-movl $0xff, %ebx
-and %ebx, %eax
-shl $16, %eax
-or %ecx, %eax
-movl %eax, %ecx
-movl %edx, %eax
-movl $0xff00, %ebx
-and %ebx, %eax
-or %ecx, %eax
-movl %eax, %ecx
-movl %edx, %eax
-movl $0xff0000, %ebx
-and %ebx, %eax
-shr $16, %eax
-or %ecx, %eax
+	movl %edx, %eax
+bswap %eax
+ror $8, %eax
 movl %eax, %edx
 
 # 0 "" 2
 #NO_APP
-	movl	%edx, -8(%ebp)
-	movl	-8(%ebp), %eax
-	addl	$16, %esp
-	popl	%ebx
-	.cfi_restore 3
-	popl	%ebp
+	movl	%edx, -4(%ebp)
+	movl	-4(%ebp), %eax
+	leave
 	.cfi_restore 5
 	.cfi_def_cfa 4, 4
 	ret

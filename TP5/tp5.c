@@ -14,15 +14,15 @@ unsigned int Decryption_fct(unsigned int le)
 	
 
 	asm volatile (
-		"movl $0xff000000, %%ebx\n" 		//mov '0xff000000' dans ebx	
+		/*"movl $0xff000000, %%ebx\n" 		//mov '0xff000000' dans ebx	
 		"movl %1, %%eax\n" 					//mov 'le' (%1) dans %eax
 		"and %%ebx, %%eax\n"				//'ET' logique 
 		"movl %%eax, %%ecx\n"				// mov resultat dans ecx
 		"movl %1, %%eax\n"				
 		"movl $0xff, %%ebx\n"
 		"and %%ebx, %%eax\n"				
-		"shl $16, %%eax\n"				//shift gauche de 16 bits
-		"or %%ecx, %%eax\n"				//'OU' logique avec resultat precedent 12(%ebp)
+		"shl $16, %%eax\n"					//shift gauche de 16 bits
+		"or %%ecx, %%eax\n"					//'OU' logique avec resultat precedent 12(%ebp)
 		"movl %%eax, %%ecx\n"
 		"movl %1, %%eax\n"
 		"movl $0xff00, %%ebx\n"
@@ -34,10 +34,14 @@ unsigned int Decryption_fct(unsigned int le)
 		"and %%ebx, %%eax\n"
 		"shr $16, %%eax\n"
 		"or %%ecx, %%eax\n"
-		"movl %%eax, %0\n"				//mettre resultat dans 'be' (%0)
+		"movl %%eax, %0\n"*/				//mettre resultat dans 'be' (%0)
+		"movl %1, %%eax\n"
+		"bswap %%eax\n"
+		"ror $8, %%eax\n"
+		"movl %%eax, %0\n"
 		: "=r"(be)
 		: "r"(le)
-		: "%eax", "%ebx", "%ecx"
+		: "%eax"
 	);
 
 	return be;
